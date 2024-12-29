@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Control</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 2rem;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #onButton {
+            background: #48bb78;
+            color: white;
+        }
+
+        #offButton {
+            background: #f56565;
+            color: white;
+        }
+
+        #status {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+
+        .success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Light Control</h1>
+        <div class="button-container">
+            <button id="onButton" onclick="controlLight('on')">Turn On</button>
+            <button id="offButton" onclick="controlLight('off')">Turn Off</button>
+        </div>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Replace these URLs with your actual endpoints
+        const URLS = {
+            on: 'http://your-api-endpoint/lights/on',
+            off: 'http://your-api-endpoint/lights/off'
+        };
+
+        async function controlLight(action) {
+            const statusDiv = document.getElementById('status');
+            try {
+                const response = await fetch(URLS[action], {
+                    method: 'GET',
+                    mode: 'cors' // Enable CORS if needed
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                statusDiv.textContent = `Successfully turned lights ${action}!`;
+                statusDiv.className = 'success';
+                statusDiv.style.display = 'block';
+            } catch (error) {
+                statusDiv.textContent = `Error: ${error.message}`;
+                statusDiv.className = 'error';
+                statusDiv.style.display = 'block';
+            }
+
+            // Hide status message after 3 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
